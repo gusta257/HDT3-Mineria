@@ -5,5 +5,19 @@ library(tree)
 library(rpart.plot)
 library(randomForest)
 
+library(cluster) #Para calcular la silueta
+library(e1071)#para cmeans
+library(mclust) #mixtures of gaussians
+library(fpc) #para hacer el plotcluster
+library(NbClust) #Para determinar el número de clusters óptimo
+library(factoextra) #Para hacer gráficos bonitos de clustering
+library(tidyr)
+library(splitstackshape)
+
 test <- read.csv("test.csv", stringsAsFactors = FALSE)
 train <- read.csv("train.csv", stringsAsFactors = FALSE)
+View(head(train))
+summary(train)
+
+trainImportantes <- train[c("popularity","runtime","vote_count","budget","revenue","release_year")]
+
