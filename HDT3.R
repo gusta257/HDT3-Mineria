@@ -1,4 +1,4 @@
-setwd("C:/Users/Gustavo/Desktop/SEPTIMO SEMESTRE/MINERIA/HDT3/HDT3-Mineria")
+setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Hoja_Trabajo_3/HDT3-Mineria")
 library(rpart)
 library(caret)
 library(tree)
@@ -19,5 +19,13 @@ train <- read.csv("train.csv", stringsAsFactors = FALSE)
 View(head(train))
 summary(train)
 
-trainImportantes <- train[c("popularity","runtime","vote_count","budget","revenue","release_year")]
+trainImportantes <- train[c("MSSubClass","LotFrontage","LotArea","OverallCond","YearBuilt","YearRemodAdd","X2ndFlrSF","FullBath","TotRmsAbvGrd","KitchenAbvGr","GarageCars","PoolArea","SalePrice")]
+trainImportantes[is.na(trainImportantes)]<-0
+#Para saber cual es el mejor numero de clusters
+wss <- (nrow(trainImportantes)-1)*sum(apply(trainImportantes,2,var))
+for (i in 2:10) 
+  wss[i] <- sum(kmeans(trainImportantes, centers=i)$withinss)
+
+# Se plotea la grafica de codo
+plot(1:10, wss, type="b", xlab="Number of Clusters",  ylab="Within groups sum of squares")
 
