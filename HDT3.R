@@ -1,4 +1,5 @@
-setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Hoja_Trabajo_3/HDT3-Mineria")
+#setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Hoja_Trabajo_3/HDT3-Mineria")
+setwd("C:/Users/Gustavo/Desktop/SEPTIMO SEMESTRE/MINERIA/HDT3/HDT3-Mineria")
 library(rpart)
 library(caret)
 library(tree)
@@ -28,4 +29,38 @@ for (i in 2:10)
 
 # Se plotea la grafica de codo
 plot(1:10, wss, type="b", xlab="Number of Clusters",  ylab="Within groups sum of squares")
+
+km<-kmeans(trainImportantes,3)
+train$grupo<-km$cluster
+
+plotcluster(trainImportantes,km$cluster)
+#Visualización de las k-medias
+fviz_cluster(km, data = trainImportantes,geom = "point", ellipse.type = "norm")
+#-----------------------------------------------------------------------------------------------
+#Silueta de que tan bien hizo el cluster
+silkm<-silhouette(km$cluster,dist(trainImportantes))
+mean(silkm[,3])
+
+
+g1<- train[train$grupo==1,]
+prop11 <- prop.table(table(g1$categoria1))*100
+prop12 <- prop.table(table(g1$categoria2))*100
+prop13 <- prop.table(table(g1$categoria3))*100
+
+g2<- train[train$grupo==2,]
+prop21 <-prop.table(table(g2$categoria1))*100
+prop22 <-prop.table(table(g2$categoria2))*100
+prop23 <-prop.table(table(g2$categoria3))*100
+
+g3<- train[train$grupo==3,]
+prop31 <-prop.table(table(g3$categoria1))*100
+prop32 <-prop.table(table(g3$categoria2))*100
+prop33 <-prop.table(table(g3$categoria3))*100
+
+
+
+
+
+
+
 
