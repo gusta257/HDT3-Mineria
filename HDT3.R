@@ -80,14 +80,14 @@ columnaMasAlta<-apply(prediccionR, 1, function(x) colnames(prediccionR)[which.ma
 
 #cfm<-confusionMatrix(table(test1$prediccion, test1$grupo))
 #cfm
-#------------------------------------------------------------------
-#con random forest
+#------------------------------------------------------------------ con random forest
 modeloRF1<-randomForest(grupo~.,data=train1)
-prediccionRF1<-predict(modeloRF1,newdata = test1[,1:6])
+prediccionRF1<-predict(modeloRF1,newdata = test1[,1:7])
 testCompleto<-test1
-testCompleto$predRF<-prediccionRF1
+testCompleto$predRF<-round(prediccionRF1)
 cfmRandomForest <- confusionMatrix(table(testCompleto$predRF, testCompleto$grupo))
 cfmRandomForest
+#########################################################################################
 
 
 
