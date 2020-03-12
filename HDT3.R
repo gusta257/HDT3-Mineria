@@ -29,7 +29,7 @@ for (i in 2:10)
 plot(1:10, wss, type="b", xlab="Number of Clusters",  ylab="Within groups sum of squares")
 
 km<-kmeans(trainImportantes,3)
-trainImportantes$grupo<-km$cluster
+train$grupo<-km$cluster
 
 plotcluster(trainImportantes,km$cluster)
 #Visualizaci�n de las k-medias
@@ -44,24 +44,22 @@ g2<- trainImportantes[trainImportantes$grupo==2,]
 g3<- trainImportantes[trainImportantes$grupo==3,]
 
 
-trainTree <- trainImportantes[c("YearBuilt","YearRemodAdd","X2ndFlrSF","FullBath","KitchenAbvGr","GarageCars","grupo")]
-
-
+trainTree <- train[c("YearBuilt","YearRemodAdd","X2ndFlrSF","FullBath","KitchenAbvGr","GarageCars","grupo")]
 #-----------------------------------------------------------------------------------------------
 porciento <- 70/100
-set.seed(18)
+set.seed(2)
 trainRowsNumber<-sample(1:nrow(trainTree),porciento*nrow(trainTree))
 train1<-trainTree[trainRowsNumber,]
 test1<-trainTree[-trainRowsNumber,]
 dt_model<-rpart(grupo~.,train1,method = "class")
 plot(dt_model);text(dt_model)
 prp(dt_model)
-rpart.plot(dt_model)
+#rpart.plot(dt_model)
 prediccion <- predict(dt_model, newdata = test1[,1:6])
 
 columnaMasAlta<-apply(prediccion, 1, function(x) colnames(prediccion)[which.max(x)])
 test1$prediccion<-columnaMasAlta #Se le añade al grupo de prueba el valor de la predicción
-
+#View(test1)
 cfm<-confusionMatrix(table(test1$prediccion, test1$grupo))
 cfm
 
@@ -77,7 +75,7 @@ prp(dt_modelR)
 rpart.plot(dt_modelR)
 prediccionR <- predict(dt_modelR, newdata = test1[,1:6])
 
-#columnaMasAlta<-apply(prediccionR, 1, function(x) colnames(prediccionR)[which.max(x)])
+columnaMasAlta<-apply(prediccionR, 1, function(x) colnames(prediccionR)[which.max(x)])
 #test1$prediccion<-columnaMasAlta #Se le añade al grupo de prueba el valor de la predicción
 
 #cfm<-confusionMatrix(table(test1$prediccion, test1$grupo))
