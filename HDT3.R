@@ -65,6 +65,31 @@ test1$prediccion<-columnaMasAlta #Se le añade al grupo de prueba el valor de la
 cfm<-confusionMatrix(table(test1$prediccion, test1$grupo))
 cfm
 
+#---------------------------------------------------------------------
+porciento <- 70/100
+set.seed(18)
+trainRowsNumber<-sample(1:nrow(trainTree),porciento*nrow(trainTree))
+train1<-trainTree[trainRowsNumber,]
+test1<-trainTree[-trainRowsNumber,]
+dt_modelR<-rpart(grupo~.,train1,method = "anova")
+plot(dt_modelR);text(dt_modelR)
+prp(dt_modelR)
+rpart.plot(dt_modelR)
+prediccionR <- predict(dt_modelR, newdata = test1[,1:6])
+
+#columnaMasAlta<-apply(prediccionR, 1, function(x) colnames(prediccionR)[which.max(x)])
+#test1$prediccion<-columnaMasAlta #Se le añade al grupo de prueba el valor de la predicción
+
+#cfm<-confusionMatrix(table(test1$prediccion, test1$grupo))
+#cfm
+#------------------------------------------------------------------
+#con random forest
+modeloRF1<-randomForest(grupo~.,data=train1)
+prediccionRF1<-predict(modeloRF1,newdata = test1[,1:6])
+testCompleto<-test1
+testCompleto$predRF<-prediccionRF1
+cfmRandomForest <- confusionMatrix(table(testCompleto$predRF, testCompleto$grupo))
+cfmRandomForest
 
 
 
