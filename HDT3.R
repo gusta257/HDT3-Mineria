@@ -44,7 +44,7 @@ g2<- trainImportantes[trainImportantes$grupo==2,]
 g3<- trainImportantes[trainImportantes$grupo==3,]
 
 
-trainTree <- train[c("YearBuilt","YearRemodAdd","X2ndFlrSF","FullBath","KitchenAbvGr","GarageCars","grupo")]
+trainTree <- train[c("LotArea","YearBuilt","YearRemodAdd","X2ndFlrSF","FullBath","KitchenAbvGr","GarageCars","grupo")]
 #-----------------------------------------------------------------------------------------------
 porciento <- 70/100
 set.seed(2)
@@ -55,7 +55,7 @@ dt_model<-rpart(grupo~.,train1,method = "class")
 plot(dt_model);text(dt_model)
 prp(dt_model)
 #rpart.plot(dt_model)
-prediccion <- predict(dt_model, newdata = test1[,1:6])
+prediccion <- predict(dt_model, newdata = test1[,1:7])
 
 columnaMasAlta<-apply(prediccion, 1, function(x) colnames(prediccion)[which.max(x)])
 test1$prediccion<-columnaMasAlta #Se le añade al grupo de prueba el valor de la predicción
