@@ -17,8 +17,8 @@ library(splitstackshape)
 
 test <- read.csv("test.csv", stringsAsFactors = FALSE)
 train <- read.csv("train.csv", stringsAsFactors = FALSE)
-View(head(train))
-summary(train)
+#View(head(train))
+#summary(train)
 
 trainImportantes <- train[c("MSSubClass","LotFrontage","LotArea","OverallCond","YearBuilt","YearRemodAdd","X2ndFlrSF","FullBath","TotRmsAbvGrd","KitchenAbvGr","GarageCars","PoolArea","SalePrice")]
 trainImportantes[is.na(trainImportantes)]<-0
@@ -56,8 +56,17 @@ g3<- train[train$grupo==3,]
 prop31 <-prop.table(table(g3$categoria1))*100
 prop32 <-prop.table(table(g3$categoria2))*100
 prop33 <-prop.table(table(g3$categoria3))*100
-
-
+#-----------------------------------------------------------------------------------------------
+porciento <- 70/100
+set.seed(546)
+trainRowsNumber<-sample(1:nrow(train),porciento*nrow(train))
+train1<-train[trainRowsNumber,]
+test1<-train[-trainRowsNumber,]
+dt_model<-rpart(grupo~.,train1,method = "class")
+plot(dt_model);text(dt_model)
+prp(dt_model)
+rpart.plot(dt_model)
+prediccion <- predict(dt_model, newdata = test1[1:81])
 
 
 
