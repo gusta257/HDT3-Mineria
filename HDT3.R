@@ -5,7 +5,6 @@ library(caret)
 library(tree)
 library(rpart.plot)
 library(randomForest)
-
 library(cluster) #Para calcular la silueta
 library(e1071)#para cmeans
 library(mclust) #mixtures of gaussians
@@ -17,11 +16,10 @@ library(splitstackshape)
 
 test <- read.csv("test.csv", stringsAsFactors = FALSE)
 train <- read.csv("train.csv", stringsAsFactors = FALSE)
-#View(head(train))
-#summary(train)
 
 trainImportantes <- train[c("MSSubClass","LotFrontage","LotArea","OverallCond","YearBuilt","YearRemodAdd","X2ndFlrSF","FullBath","TotRmsAbvGrd","KitchenAbvGr","GarageCars","PoolArea","SalePrice")]
 trainImportantes[is.na(trainImportantes)]<-0
+
 #Para saber cual es el mejor numero de clusters
 wss <- (nrow(trainImportantes)-1)*sum(apply(trainImportantes,2,var))
 for (i in 2:10) 
@@ -31,7 +29,7 @@ for (i in 2:10)
 plot(1:10, wss, type="b", xlab="Number of Clusters",  ylab="Within groups sum of squares")
 
 km<-kmeans(trainImportantes,3)
-train$grupo<-km$cluster
+trainImportantes$grupo<-km$cluster
 
 plotcluster(trainImportantes,km$cluster)
 #Visualizaci�n de las k-medias
@@ -41,33 +39,31 @@ fviz_cluster(km, data = trainImportantes,geom = "point", ellipse.type = "norm")
 silkm<-silhouette(km$cluster,dist(trainImportantes))
 mean(silkm[,3])
 
+g1<- trainImportantes[trainImportantes$grupo==1,]
+g2<- trainImportantes[trainImportantes$grupo==2,]
+g3<- trainImportantes[trainImportantes$grupo==3,]
 
-g1<- train[train$grupo==1,]
-prop11 <- prop.table(table(g1$categoria1))*100
-prop12 <- prop.table(table(g1$categoria2))*100
-prop13 <- prop.table(table(g1$categoria3))*100
 
-g2<- train[train$grupo==2,]
-prop21 <-prop.table(table(g2$categoria1))*100
-prop22 <-prop.table(table(g2$categoria2))*100
-prop23 <-prop.table(table(g2$categoria3))*100
+trainTree <- trainImportantes[c("YearBuilt","YearRemodAdd","X2ndFlrSF","FullBath","KitchenAbvGr","GarageCars","grupo")]
 
-g3<- train[train$grupo==3,]
-prop31 <-prop.table(table(g3$categoria1))*100
-prop32 <-prop.table(table(g3$categoria2))*100
-prop33 <-prop.table(table(g3$categoria3))*100
+
 #-----------------------------------------------------------------------------------------------
 porciento <- 70/100
-set.seed(546)
-trainRowsNumber<-sample(1:nrow(train),porciento*nrow(train))
-train1<-train[trainRowsNumber,]
-test1<-train[-trainRowsNumber,]
+set.seed(18)
+trainRowsNumber<-sample(1:nrow(trainTree),porciento*nrow(trainTree))
+train1<-trainTree[trainRowsNumber,]
+test1<-trainTree[-trainRowsNumber,]
 dt_model<-rpart(grupo~.,train1,method = "class")
 plot(dt_model);text(dt_model)
 prp(dt_model)
 rpart.plot(dt_model)
-prediccion <- predict(dt_model, newdata = test1[1:81])
+prediccion <- predict(dt_model, newdata = test1[,1:6])
 
+columnaMasAlta<-apply(prediccion, 1, function(x) colnames(prediccion)[which.max(x)])
+test1$prediccion<-columnaMasAlta #Se le añade al grupo de prueba el valor de la predicción
+
+cfm<-confusionMatrix(table(test1$prediccion, test1$grupo))
+cfm
 
 
 
