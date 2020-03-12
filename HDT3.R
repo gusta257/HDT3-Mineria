@@ -54,7 +54,7 @@ test1<-trainTree[-trainRowsNumber,]
 dt_model<-rpart(grupo~.,train1,method = "class")
 plot(dt_model);text(dt_model)
 prp(dt_model)
-#rpart.plot(dt_model)
+rpart.plot(dt_model)
 prediccion <- predict(dt_model, newdata = test1[,1:7])
 
 columnaMasAlta<-apply(prediccion, 1, function(x) colnames(prediccion)[which.max(x)])
@@ -73,8 +73,9 @@ dt_modelR<-rpart(grupo~.,train1,method = "anova")
 plot(dt_modelR);text(dt_modelR)
 prp(dt_modelR)
 rpart.plot(dt_modelR)
-prediccionR <- predict(dt_modelR, newdata = test1[,1:6])
+prediccionR <- predict(dt_modelR, newdata = test1[,1:7])
 
+table(test1$grupo,round(prediccionR))
 columnaMasAlta<-apply(prediccionR, 1, function(x) colnames(prediccionR)[which.max(x)])
 #test1$prediccion<-columnaMasAlta #Se le añade al grupo de prueba el valor de la predicción
 
