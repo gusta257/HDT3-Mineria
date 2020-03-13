@@ -13,6 +13,7 @@ library(NbClust) #Para determinar el número de clusters óptimo
 library(factoextra) #Para hacer gráficos bonitos de clustering
 library(tidyr)
 library(splitstackshape)
+library(plyr)
 
 test <- read.csv("test.csv", stringsAsFactors = FALSE)
 train <- read.csv("train.csv", stringsAsFactors = FALSE)
@@ -39,10 +40,11 @@ fviz_cluster(km, data = trainImportantes,geom = "point", ellipse.type = "norm")
 silkm<-silhouette(km$cluster,dist(trainImportantes))
 mean(silkm[,3])
 
-g1<- trainImportantes[trainImportantes$grupo==1,]
-g2<- trainImportantes[trainImportantes$grupo==2,]
-g3<- trainImportantes[trainImportantes$grupo==3,]
+g1<- train[train$grupo==1,]
+g2<- train[train$grupo==2,]
+g3<- train[train$grupo==3,]
 
+train$grupo <- mapvalues(train$grupo, c(1,2,3), c("Economica","Caro","Intermedio"))
 
 trainTree <- train[c("LotArea","YearBuilt","YearRemodAdd","X2ndFlrSF","FullBath","KitchenAbvGr","GarageCars","grupo")]
 #-----------------------------------------------------------------------------------------------
